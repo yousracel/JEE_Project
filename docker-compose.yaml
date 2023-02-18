@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - service1
+      - service2
+      - service3
+      - service4
+      - service5
+  eureka-discovery:
+    build:
+      context: ./eureka-discovery
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-discovery
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - gateway-service
+  customer-service:
+    build:
+      context: ./customer-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - inventory-service
+  billing-service:
+    build:
+      context: ./billing-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - customer-service
+      - inventory-service
+   catalog:
+    build:
+      context: ./catalog
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - billig-service
